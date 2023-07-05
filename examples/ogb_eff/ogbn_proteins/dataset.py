@@ -10,7 +10,7 @@ import pickle
 import scipy.sparse as sp
 from torch_scatter import scatter
 import random
-
+import numpy as np
 
 class OGBNDataset(object):
 
@@ -34,15 +34,15 @@ class OGBNDataset(object):
 
         self.train_idx, self.valid_idx, self.test_idx = self.splitted_idx["train"], self.splitted_idx["valid"], self.splitted_idx["test"]
         self.num_tasks = self.dataset.num_tasks
-        self.total_no_of_edges = self.whole_graph.edge_attr.shape[0]
+        self.total_no_of_edges = self.whole_graph.edge_index.shape[1]
         self.total_no_of_nodes = self.whole_graph.y.shape[0]
-        self.species = self.whole_graph.node_species
+        # self.species = self.whole_graph.node_species
         self.y = self.whole_graph.y
 
         self.edge_index = self.whole_graph.edge_index
-        self.edge_attr = self.whole_graph.edge_attr
+        self.edge_attr = torch.tensor(np.ones((self.total_no_of_edges, 8))) # self.whole_graph.edge_attr
 
-        self.x = self.generate_one_hot_encoding()
+        self.x = self.whole_graph.x # self.generate_one_hot_encoding()
         # transpose and then convert it to numpy array type
         self.edge_index_array = self.edge_index.t().numpy()
         # obtain edge index dict

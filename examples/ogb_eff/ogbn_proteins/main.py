@@ -15,7 +15,7 @@ from utils.ckpt_util import save_ckpt
 from utils.data_util import intersection, process_indexes
 import logging
 from torch.utils.tensorboard import SummaryWriter
-
+from torch_geometric.loader import ClusterLoader, ClusterData
 
 def train(data, dataset, model, optimizer, criterion, device, epoch=-1):
 
@@ -165,12 +165,18 @@ def main():
 
     valid_data_list = []
 
+    cluster_data = ClusterData(dataset.whole_graph, num_parts=10)
+    valid_data_list = ClusterLoader(cluster_data, batch_size=10, shuffle=True)
+
+    '''
     for i in range(args.num_evals):
         parts = dataset.random_partition_graph(dataset.total_no_of_nodes,
                                                cluster_number=args.valid_cluster_number)
+
         valid_data = dataset.generate_sub_graphs(parts,
                                                  cluster_number=args.valid_cluster_number)
         valid_data_list.append(valid_data)
+    '''
 
     sub_dir = 'random-train_{}-test_{}-num_evals_{}'.format(args.cluster_number,
                                                             args.valid_cluster_number,
