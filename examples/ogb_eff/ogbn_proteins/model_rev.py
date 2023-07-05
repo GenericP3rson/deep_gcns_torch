@@ -72,7 +72,7 @@ class RevGCN(torch.nn.Module):
 
         self.node_features = torch.load(node_features_file_path).to(args.device)
 
-        if self.use_one_hot_encoding:
+        if False: # self.use_one_hot_encoding:
             self.node_one_hot_encoder = torch.nn.Linear(8, 8)
             self.node_features_encoder = torch.nn.Linear(8 * 2, hidden_channels)
         else:
