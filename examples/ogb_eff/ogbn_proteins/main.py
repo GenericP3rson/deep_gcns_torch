@@ -23,7 +23,8 @@ def train(data, dataset, model, optimizer, criterion, device, epoch=-1):
     model.train()
     sg_nodes, sg_edges, sg_edges_index, _ = data
 
-    train_y = dataset.y[dataset.train_idx]
+    train_y = dataset.y # [dataset.train_idx]
+    # print(train_y)
     idx_clusters = np.arange(len(sg_nodes))
     np.random.shuffle(idx_clusters)
 
@@ -37,7 +38,9 @@ def train(data, dataset, model, optimizer, criterion, device, epoch=-1):
 
         mapper = {node: idx for idx, node in enumerate(sg_nodes[idx])}
 
+        ## TODO: FIGURE OUT WHAT'S GOING ON HERE!
         inter_idx = intersection(sg_nodes[idx], dataset.train_idx.tolist())
+        # print(inter_idx)
         training_idx = [mapper[t_idx] for t_idx in inter_idx]
 
         optimizer.zero_grad()
@@ -223,9 +226,9 @@ def main():
         if epoch % 5 == 0:
             logging.info('%s' % result)
 
-        train_result = result['train']['rocauc']
-        valid_result = result['valid']['rocauc']
-        test_result = result['test']['rocauc']
+        train_result = result['train']['acc']
+        valid_result = result['valid']['acc']
+        test_result = result['test']['acc']
         writer.add_scalar('stats/train_rocauc', train_result, epoch)
         writer.add_scalar('stats/valid_rocauc', valid_result, epoch)
         writer.add_scalar('stats/test_rocauc', test_result, epoch)
